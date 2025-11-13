@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Controllers;
-
 use App\Models\Client;
 use App\Surveys\RatingSurvey;
 
@@ -17,7 +15,6 @@ class FeedbackController
     public function handleRequest(): void
     {
         $method = $_SERVER['REQUEST_METHOD'];
-
         $clientId = filter_input(INPUT_GET, 'client_id', FILTER_VALIDATE_INT);
 
         if ($clientId === false || $clientId === null || !Client::exists($clientId)) {
@@ -34,11 +31,14 @@ class FeedbackController
 
     private function showForm(int $clientId): void
     {
+        $cssLink = '<link rel="stylesheet" href="/assets/css/style.css">';
+
         echo '<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Оставьте отзыв</title>
+    ' . $cssLink . '
 </head>
 <body>
     ' . $this->survey->renderForm($clientId) . '
@@ -49,12 +49,20 @@ class FeedbackController
     private function handlePost(int $clientId): void
     {
         if ($this->survey->handleSubmission($_POST)) {
+            $cssLink = '<link rel="stylesheet" href="/assets/css/style.css">';
+            $jsScript = '<script src="/assets/js/script.js"></script>';
+
             echo '<!DOCTYPE html>
 <html lang="ru">
-<head><meta charset="UTF-8"><title>Спасибо!</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>Спасибо!</title>
+    ' . $cssLink . '
+</head>
 <body style="font-family: Arial; text-align: center; margin-top: 50px;">
     <h2>Спасибо за ваш отзыв!</h2>
     <p>Ваше мнение очень важно для нас.</p>
+    ' . $jsScript . '
 </body>
 </html>';
         } else {
